@@ -434,18 +434,18 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 	// 添加請假紀錄
 	@Override
 	public void addLeaveRecord(LeaveRecord leaveRecord) {
-		String sql = "INSERT INTO  leaverecord (employeeID, departmentID, leaveStartDate, hours)\r\n"
-				+ "VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO  leaverecord (employeeID, departmentID, leaveStartDate, hours, approval)\r\n"
+				+ "VALUES (?, ?, ?, ?, ?)";
 		jdbcTemplate.update(sql, leaveRecord.getEmployeeID(), leaveRecord.getDepartmentID(),
-				leaveRecord.getLeaveStartDate(), leaveRecord.getHours());
+				leaveRecord.getLeaveStartDate(), leaveRecord.getHours(), leaveRecord.getApproval());
 
 	}
 
 	// 刪除請假紀錄
 	@Override
-	public void deleteLeaveRecord(Integer leaveRecordId) {
+	public void deleteLeaveRecord(Integer leaveNumber) {
 		String sql = "delete from leaverecord where leaveNumber = ?";
-		jdbcTemplate.update(sql, leaveRecordId);
+		jdbcTemplate.update(sql, leaveNumber);
 
 	}
 	
@@ -460,8 +460,11 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 	// 修改請假紀錄
 	@Override
 	public void updateLeaveRecord(LeaveRecord leaveRecord) {
-		String sql = "update leaverecord  set  leaveStartDate = ?, hours= ?, approval = ? where leaveNumber = ?;";
-		jdbcTemplate.update(sql);
+		String sql = "update leaverecord \r\n"
+					+ "set\r\n"
+					+ "leaveStartDate = ?, hours = ?, approval = ?\r\n"
+					+ "where leaveNumber = ?";
+		jdbcTemplate.update(sql, leaveRecord.getLeaveStartDate(), leaveRecord.getHours(), leaveRecord.getApproval(), leaveRecord.getLeaveNumber());
 
 	}
 
@@ -473,6 +476,14 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 					+ "where departmentID = ?";
 		jdbcTemplate.update(sql, afterDepartmentID, beforeDepartmentID);
 
+	}
+	
+	// 用員工ID修改請假紀錄部門
+	public void updateLeaveRecordDepartmentIDByEmployeeID(Integer employeeID, Integer departmentID) {
+		String sql = "update leaverecord \r\n"
+				+ "set departmentID = ?\r\n"
+				+ "where employeeID = ?";
+		jdbcTemplate.update(sql, departmentID, employeeID);
 	}
 
 	// 簽核請假紀錄
@@ -487,9 +498,16 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 
 	// 查詢請假紀錄
 	@Override
-	public Optional<LeaveRecord> findLeaveRecord(Integer leaveRecordId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Optional<LeaveRecord> findLeaveRecord(Integer leaveRecordNumber) {
+		String sql = "SELECT leaveNumber, employeeID, departmentID, leaveStartDate, hours, approval\r\n"
+					+ "FROM mytopicsdb.leaverecord\r\n"
+					+ "where leaveNumber = ?";
+	try {
+		LeaveRecord leaveRecord= jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(LeaveRecord.class), leaveRecordNumber);
+		return Optional.ofNullable(leaveRecord);
+	} catch (EmptyResultDataAccessException e) {
+		return Optional.empty();
+	}
 	}
 
 	// 用部門ID查詢未簽核請假紀錄
@@ -537,14 +555,18 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 	// 添加工時記錄
 	@Override
 	public void addWorkHoursRecord(WorkHoursRecord workHoursRecord) {
-		// TODO Auto-generated method stub
+		String sql = "insert workhoursrecord(departmentID, employeeID, startTime, endTime)\r\n"
+					+ "values(?, ?, ?, ?)";
+		jdbcTemplate.update(sql, workHoursRecord.getDepartmentID(), workHoursRecord.getEmployeeID(), workHoursRecord.getStartTime(), workHoursRecord.getEndTime());
 
 	}
+	
 
 	// 刪除工時記錄
 	@Override
 	public void deleteWorkHoursRecord(Integer workHoursRecordId) {
-		// TODO Auto-generated method stub
+		String sql = "delete from workhoursrecord where workHoursRecordID = ?";
+		jdbcTemplate.update(sql, workHoursRecordId);
 
 	}
 
@@ -567,21 +589,30 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 	// 修改工時記錄
 	@Override
 	public void updateWorkHoursRecord(WorkHoursRecord workHoursRecord) {
-		// TODO Auto-generated method stub
+		String sql = "update workhoursrecord set\r\n"
+					+ "departmentID = ?, employeeID = ?, startTime = ?, endTime = ?\r\n"
+					+ "where workHoursRecordID = ?";
+		jdbcTemplate.update(sql, workHoursRecord.getDepartmentID(), workHoursRecord.getEmployeeID(),
+				            workHoursRecord.getStartTime(), workHoursRecord.getEndTime(), workHoursRecord.getWorkHoursRecordID());
 
 	}
 
 	// 查詢工時記錄
 	@Override
 	public Optional<WorkHoursRecord> findWorkHoursRecord(Integer workHoursRecordId) {
-		// TODO Auto-generated method stub
-		return null;
+		String sql = "SELECT workHoursRecordID, departmentID, employeeID, startTime, endTime FROM mytopicsdb.workhoursrecord where workHoursRecordID = ?";
+		try {
+			WorkHoursRecord workHoursRecord= jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(WorkHoursRecord.class), workHoursRecordId);
+			return Optional.ofNullable(workHoursRecord);
+		} catch (EmptyResultDataAccessException e) {
+			return Optional.empty();
+		}
 	}
 
 	// 用部門ID查詢工時記錄
 	@Override
 	public List<WorkHoursRecord> findWorkHoursRecordByDepartmentID(Integer departmentID) {
-		String sql = "select \r\n" + "departmentID, employeeID, startTime, endTime\r\n"
+		String sql = "select \r\n" + "workHoursRecordID, departmentID, employeeID, startTime, endTime\r\n"
 				+ "from workhoursrecord                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "
 				+ "where departmentID = ?";
 
@@ -600,6 +631,27 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 	public List<WorkHoursRecord> findWorkHoursRecordByEmployeeID(Integer employeeID) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	// 用部門ID查詢工時記錄
+	@Override
+	public List<WorkHoursRecord> findAllWorkHoursRecord() {
+		String sql = "select \r\n" + "workHoursRecordID, departmentID, employeeID, startTime, endTime\r\n"
+				+ "from workhoursrecord";
+
+		List<WorkHoursRecord> workHoursRecordList = jdbcTemplate.query(sql,
+				new BeanPropertyRowMapper<>(WorkHoursRecord.class));
+		for (WorkHoursRecord workHoursRecord : workHoursRecordList) {
+			if(workHoursRecord.getEmployeeID() != null) {
+				workHoursRecord.setEmployeeInfo(this.findEmployeeInfoByEmployeeId(workHoursRecord.getEmployeeID()).get());
+			}
+			if(workHoursRecord.getDepartmentID() != null) {
+				workHoursRecord.setDepartmentInfo(this.findDepartmentInfo(workHoursRecord.getDepartmentID()).get());
+			}
+			
+		}
+
+		return workHoursRecordList;
 	}
 
 	// -------- 簽到表 --------

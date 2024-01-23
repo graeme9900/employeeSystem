@@ -11,12 +11,22 @@
 </head>
 <body>
 <script type="text/javascript">
+		function checkChoeseValue(checkboxId) {
+		
+		    var checkbox = document.getElementById(checkboxId);
+		
+		    var value = checkbox.checked ? "true" : "false";
+		
+		    checkbox.value = value;
+		
+		
+		}
     	function updateLeaveRecord(leaveNumber) {
     		var leaveStartDate = document.getElementById("leaveStartDate_"+leaveNumber).value;
     		var hours = document.getElementById("hours_"+leaveNumber).value;
     		var approval = document.getElementById("approval_"+leaveNumber).value;
     		window.location.href="./modifyAndDeleteLeaveRecord/updata?leaveNumber=" + leaveNumber +
-    																		   "&leaveStartDate=" + leaveStartDate +
+    																		   "&leaveStartDate=" + encodeURIComponent(leaveStartDate) +
     																		   "&hours=" + hours +
     																		   "&approval=" + approval;
     		
@@ -53,10 +63,12 @@
 		            	<input type="datetime-local" class="form-control" id="leaveStartDate_${ leaveRecord.getLeaveNumber() }" name="leaveStartDate_${ leaveRecord.getLeaveNumber() }" value="${leaveRecord.getLeaveStartDate()}">
 		            </td>
 		            <td>
-		            	<input type="text" class="form-control" id="hours_${ leaveRecord.getLeaveNumber() }" name="hours_${ leaveRecord.getLeaveNumber() }" value="${leaveRecord.getHours()}">
+		            	<input type="number" min="1" class="form-control" id="hours_${ leaveRecord.getLeaveNumber() }" name="hours_${ leaveRecord.getLeaveNumber() }" value="${leaveRecord.getHours()}">
 		            </td>
 		            <td>
-		            	<input type="text" class="form-control" id="approval_${ leaveRecord.getLeaveNumber() }" name="approval_${ leaveRecord.getLeaveNumber() }" value="${ leaveRecord.getApproval() }">
+			            <h4>
+			            	<input type="checkbox"  id="approval_${ leaveRecord.getLeaveNumber() }" name="approval_${ leaveRecord.getLeaveNumber() }" onchange="checkChoeseValue('approval_${ leaveRecord.getLeaveNumber() }')" value="${ leaveRecord.getApproval() }" ${ leaveRecord.getApproval()? "checked" : "" } >
+			            </h4>
 		            </td>
 		            <td>
 	                <button class="btn btn-primary" onclick="updateLeaveRecord(${ leaveRecord.getLeaveNumber() })">修改</button>
@@ -68,6 +80,9 @@
 			</c:forEach>
         </tbody>
     </table>
+    <div class="row">
+       	<a href="./leaveForm" class=" btn btn-success col mt-3 mb-3 text-end" >增加+</a>
+    </div>
 </div>
 
 

@@ -164,13 +164,16 @@ public interface EmployeeManagementDao {
     void deleteLeaveRecordByEmployeeID(Integer employeeID);
     
     // 查詢請假紀錄
-    Optional<LeaveRecord> findLeaveRecord(Integer leaveRecordId);
+    Optional<LeaveRecord> findLeaveRecord(Integer leaveRecordNumber);
     
     // 修改請假紀錄部門
  	void updateLeaveRecordByDepartmentID(Integer beforeDepartmentID, Integer afterDepartmentID);
     
     // 簽核請假紀錄
     void updateLeaveRecordByLeaveNumberID(Integer leaveNumber);
+    
+    // 用員工ID修改請假紀錄部門
+ 	void updateLeaveRecordDepartmentIDByEmployeeID(Integer employeeID, Integer departmentID);
     
     // 用部門ID查詢請假紀錄
  	List<LeaveRecord> findLeaveRecordByDepartmentID(Integer departmentId);
@@ -206,6 +209,9 @@ public interface EmployeeManagementDao {
     
     // 用員工ID查詢工時記錄
     List<WorkHoursRecord> findWorkHoursRecordByEmployeeID(Integer employeeID);
+    
+    // 用部門ID查詢工時記錄
+ 	List<WorkHoursRecord> findAllWorkHoursRecord();
 
     // -------- 簽到表 --------
     

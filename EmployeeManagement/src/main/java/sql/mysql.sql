@@ -79,11 +79,11 @@
 +-------------------+-------------------+----------------+
 |   英文欄位          |   中文欄位          |  資料型態        |
 +-------------------+-------------------+----------------+
+| workHoursRecordID |   部門編號          |   INT          |
 |   departmentID    |   部門編號          |   INT          |
 |   employeeID      |   員工編號          |   INT          |
-|   workDate        |   日期             |   DATETIME     | 
-|   startTime       |   開始時間          |   INT          |
-|   endTime         |   結束時間          |   INT          |
+|   startTime       |   開始日期          |   DATETIME          |
+|   endTime         |   結束日期          |   DATETIME          |
 |   hours           |   小時             |   INT          |
 +-------------------+-------------------+----------------+
 
@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS interest (
 
 -- 建立 DepartmentInfo table
 CREATE TABLE IF NOT EXISTS departmentInfo (
-    departmentID INT auto_increment PRIMARY KEY,
+    departmentID INT PRIMARY KEY,
     departmentName VARCHAR(255),
     employeeCount INT,
     managerID INT
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS departmentInfo (
 );
 
 -- 設置 AUTO_INCREMENT = 1
-alter table departmentInfo auto_increment = 1;
+-- alter table departmentInfo auto_increment = 0;
 
 -- 建立 leaveRecord table
 CREATE TABLE IF NOT EXISTS leaveRecord (
@@ -210,6 +210,7 @@ alter table leaveRecord auto_increment = 1;
 
 -- 建立 workHoursRecord table
 CREATE TABLE IF NOT EXISTS workHoursRecord (
+	workHoursRecordID INT auto_increment primary key,
     departmentID INT,
     employeeID INT,
     startTime DATETIME,
@@ -217,6 +218,9 @@ CREATE TABLE IF NOT EXISTS workHoursRecord (
     FOREIGN KEY (departmentID) REFERENCES DepartmentInfo(departmentID),
     FOREIGN KEY (employeeID) REFERENCES employeeInfo(employeeID)
 );
+
+-- 設置 AUTO_INCREMENT = 1
+alter table workHoursRecord auto_increment = 1;
 
 -- 建立 attendanceTable table
 CREATE TABLE IF NOT EXISTS attendanceTable (
@@ -237,7 +241,8 @@ CREATE TABLE IF NOT EXISTS integerData (
 INSERT INTO integerData (dataName, number)
 VALUES
 ('latestCheckInNumber', 1),
-('employeeID', 1);
+('employeeID', 1),
+('departmentID', 0);
 
 
 -- 插入 EmployeeInfo 資料
@@ -292,15 +297,17 @@ INSERT INTO interest (employeeID, interest) VALUES
 
 
 -- 插入八筆部門資訊
-INSERT INTO departmentInfo (departmentName, employeeCount, managerID) VALUES 
-('行政部門', 20, 1),
-('財務部門', 15, 1),
-('銷售與市場部門', 30, 1),
-('研發與創新部門', 25, 2),
-('生產與製造部門', 50, 2),
-('客戶服務部門', 40, 2),
-('資訊技術部門', 35, 3),
-('法務與合規部門', 10, 3);
+INSERT INTO departmentInfo (departmentID, departmentName, employeeCount, managerID) VALUES 
+(0, '無部門', 0, 0),
+(1, '行政部門', 20, 1),
+(2, '財務部門', 15, 1),
+(3, '銷售與市場部門', 30, 1),
+(4, '研發與創新部門', 25, 2),
+(5, '生產與製造部門', 50, 2),
+(6, '客戶服務部門', 40, 2),
+(7, '資訊技術部門', 35, 3),
+(8, '法務與合規部門', 10, 3);
+UPDATE integerData SET number = 0+9 WHERE dataName = 'departmentID';
 
 -- 插入 leaveRecord 資料
 INSERT INTO leaveRecord (employeeID, departmentID, leaveStartDate, hours, approval) VALUES
@@ -311,7 +318,7 @@ INSERT INTO leaveRecord (employeeID, departmentID, leaveStartDate, hours, approv
 (2, 2, '2023-05-12T08:55:00', 8, false),
 (3, 3, '2023-06-18T10:40:00', 10, false),
 (1, 1, '2023-07-25T12:15:00', 12, false),
-(2, 2, '2023-08-30T08:05:00', 8, false);
+(2, 2, '2023-08-30T08:05:00', 8, true);
 
 -- 插入 workHoursRecord 資料
 INSERT INTO workHoursRecord (employeeID, departmentID, startTime, endTime)

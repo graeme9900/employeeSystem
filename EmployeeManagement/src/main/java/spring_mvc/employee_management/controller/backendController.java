@@ -3,6 +3,8 @@ package spring_mvc.employee_management.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +27,7 @@ import spring_mvc.employee_management.model.entity.DepartmentInfo;
 import spring_mvc.employee_management.model.entity.EmployeeInfo;
 import spring_mvc.employee_management.model.entity.IntegerData;
 import spring_mvc.employee_management.model.entity.LeaveRecord;
+import spring_mvc.employee_management.model.entity.WorkHoursRecord;
 
 // 後端控制
 @Controller
@@ -122,7 +126,7 @@ public class backendController {
 	// 修改表單
 	@GetMapping("/modifyAndDeleteEmployeeInformation/updata")
 	public String backendModifyAndDeleteEmployeeInformationDelete(@RequestParam("personName") String personName,
-			@RequestParam("departmentID") String departmentID,
+			@RequestParam("departmentID") Integer departmentID,
 			@RequestParam("position") String position,
 			@RequestParam("positionrank") String positionrank,
 			@RequestParam("hireDate") String hireDateString,
@@ -152,6 +156,7 @@ public class backendController {
 		List<String> skillList = Arrays.asList(skillListString.split(","));
 		List<String> interestList = Arrays.asList(interestListString.split(","));
 
+		employeeInfo.setDepartmentID(departmentID);
 		employeeInfo.setPersonName(personName);
 		employeeInfo.setPosition(position);
 		employeeInfo.setPositionrank(positionrank);
@@ -175,6 +180,9 @@ public class backendController {
 		dao.addSkill(employeeInfo);
 		dao.deleteInterest(employeeInfo.getEmployeeID());
 		dao.addInterest(employeeInfo);
+		
+		// 假單部門修改
+		dao.updateLeaveRecordDepartmentIDByEmployeeID(employeeInfo.getEmployeeID(), departmentID);
 
 		return "redirect:/mvc/backend/modifyAndDeleteEmployeeInformationMenu";
 	}
@@ -361,11 +369,20 @@ public class backendController {
 	//請假表格修改
 	@GetMapping("/modifyAndDeleteLeaveRecord/updata")
 	public String backendModifyAndDeleteLeaveRecordUpdata(@RequestParam("leaveNumber") Integer leaveNumber,
-														  @RequestParam("leaveStartDate") String leaveStartDate,
+														  @RequestParam("leaveStartDate") String leaveStartDateString,
 														  @RequestParam("hours") Integer hours,
-														  @RequestParam("approval") String approval,
+														  @RequestParam("approval") Boolean approval,
 														  Model model) {
-		System.out.println(leaveStartDate);
+		
+		LocalDateTime leaveStartDate = LocalDateTime.parse(leaveStartDateString);
+		
+		Optional<LeaveRecord> leaveRecordOpt = dao.findLeaveRecord(leaveNumber);
+		LeaveRecord leaveRecord = leaveRecordOpt.get();
+		
+		leaveRecord.setLeaveStartDate(leaveStartDate);
+		leaveRecord.setHours(hours);
+		leaveRecord.setApproval(approval);
+		dao.updateLeaveRecord(leaveRecord);
 		
 		return "redirect:/mvc/backend/modifyAndDeleteLeaveRecord";
 	}
@@ -374,18 +391,110 @@ public class backendController {
 	@GetMapping("/modifyAndDeleteLeaveRecord/delete")
 	public String backendModifyAndDeleteLeaveRecordDelete(@RequestParam("leaveNumber") Integer leaveNumber,
 														  Model model) {
+		dao.deleteLeaveRecord(leaveNumber);
+		
+		return "redirect:/mvc/backend/modifyAndDeleteLeaveRecord";
+	}
+	
+	
+	
+	// 增加請假頁面
+	// http://localhost:8080/EmployeeManagement/mvc/backend/leaveForm
+	@GetMapping("/leaveForm")
+	public String backendLeaveForm(Model model) {
+		
+
+		return "employee_management/backend/leaveRecordForm/leaveForm";
+	}
+	
+	// 請假增加
+	@PostMapping("/leaveForm/add")
+	public String backendModifyAndDeleteLeaveRecordAdd(@RequestParam("employeeId") Integer employeeId,
+													   @RequestParam("leaveStartDate") String leaveStartDateString,
+													   @RequestParam("hours") Integer hours,
+													   @RequestParam("approval") Boolean approval,
+													   Model model) {
+		
+		LocalDateTime leaveStartDate = LocalDateTime.parse(leaveStartDateString);
+		
+		
+		LeaveRecord leaveRecord = new LeaveRecord();
+		leaveRecord.setEmployeeID(employeeId);
+		leaveRecord.setLeaveStartDate(leaveStartDate);
+		leaveRecord.setHours(hours);
+		leaveRecord.setApproval(approval);
+		
+		Optional<EmployeeInfo> employeeInfoOpt = dao.findEmployeeInfoByEmployeeId(employeeId);
+		EmployeeInfo employeeInfo = employeeInfoOpt.get();
+		Integer departmentID = employeeInfo.getDepartmentID();
+		leaveRecord.setDepartmentID(departmentID);
+		
+		dao.addLeaveRecord(leaveRecord);
 
 		return "redirect:/mvc/backend/modifyAndDeleteLeaveRecord";
 	}
+	
 	
 	// 工時表格
 	
 	// 工時表格表單
 	// http://localhost:8080/EmployeeManagement/mvc/backend/modifyAndDeleteWorkHoursRecord
 	@GetMapping("/modifyAndDeleteWorkHoursRecord")
-	public String backendModifyAndDeleteWorkHoursRecord() {
-
+	public String backendModifyAndDeleteWorkHoursRecord(Model model) {
+		List<WorkHoursRecord> workHoursRecordList = dao.findAllWorkHoursRecord();
+		model.addAttribute("workHoursRecordList", workHoursRecordList);
 		return "employee_management/backend/workHoursRecord/modifyAndDeleteWorkHoursRecord";
+	}
+	
+	// 工時表格修改
+	@GetMapping("/modifyAndDeleteWorkHoursRecord/updata")
+	public String backendModifyAndDeleteWorkHoursRecordUpdata(@RequestParam("workHoursRecordID") Integer workHoursRecordID,
+															  @RequestParam("employeeID") Integer employeeID,
+														  	  @RequestParam("startTime") String startTimeString, 
+														  	  @RequestParam("endTime") String endTimeString,
+														  	  Model model) {
+		LocalDateTime startTime = LocalDateTime.parse(startTimeString);
+		LocalDateTime endTime = LocalDateTime.parse(endTimeString);
+		
+		
+		Optional<WorkHoursRecord> workHoursRecordOpt = dao.findWorkHoursRecord(workHoursRecordID);
+		WorkHoursRecord workHoursRecord = workHoursRecordOpt.get();
+		
+		workHoursRecord.setEmployeeID(employeeID);
+		workHoursRecord.setStartTime(startTime);
+		workHoursRecord.setEndTime(endTime);
+		
+		Optional<EmployeeInfo> employeeInfoOpt = dao.findEmployeeInfoByEmployeeId(employeeID);
+		EmployeeInfo employeeInfo = employeeInfoOpt.get();
+		Integer departmentID = employeeInfo.getDepartmentID();
+		workHoursRecord.setDepartmentID(departmentID);
+		
+		
+		dao.updateWorkHoursRecord(workHoursRecord);
+
+
+		return "redirect:/mvc/backend/modifyAndDeleteWorkHoursRecord";
+	}
+		
+	// 工時表格刪除
+	@GetMapping("/modifyAndDeleteWorkHoursRecord/delete")
+	public String backendModifyAndDeleteWorkHoursRecordDelete(@RequestParam("workHoursRecordID") Integer workHoursRecordID, Model model) {
+
+		dao.deleteWorkHoursRecord(workHoursRecordID);
+		
+		return "redirect:/mvc/backend/modifyAndDeleteWorkHoursRecord";
+	}
+	
+	// 工時表格增加
+	@GetMapping("/modifyAndDeleteWorkHoursRecord/add")
+	public String backendModifyAndDeleteWorkHoursRecordAdd() {
+		WorkHoursRecord workHoursRecord = new WorkHoursRecord();
+		
+		
+		
+		dao.addWorkHoursRecord(workHoursRecord);
+
+		return "redirect:/mvc/backend/modifyAndDeleteWorkHoursRecord";
 	}
 	
 	// 簽到表格

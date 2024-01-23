@@ -191,6 +191,7 @@ public class frontendController {
 		leaveRecord.setDepartmentID(employee.getDepartmentID());
 		leaveRecord.setLeaveStartDate(startDate);
 		leaveRecord.setHours(hours);
+		leaveRecord.setApproval(false);
 		
 		dao.addLeaveRecord(leaveRecord);
 		

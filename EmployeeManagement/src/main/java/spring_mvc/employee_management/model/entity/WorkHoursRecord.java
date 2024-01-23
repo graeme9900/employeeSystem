@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalDate;
 
 public class WorkHoursRecord {
+	private Integer workHoursRecordID;
 	private Integer departmentID;
 	private Integer employeeID;
 	private LocalDateTime startTime;
@@ -16,13 +17,31 @@ public class WorkHoursRecord {
 
 	}
 
-	public WorkHoursRecord(Integer departmentID, Integer employeeID, LocalDateTime startTime, LocalDateTime endTime) {
-		super();
+	
+
+	public WorkHoursRecord(Integer workHoursRecordID, Integer departmentID, Integer employeeID, LocalDateTime startTime,
+			LocalDateTime endTime) {
+
+		this.workHoursRecordID = workHoursRecordID;
 		this.departmentID = departmentID;
 		this.employeeID = employeeID;
 		this.startTime = startTime;
 		this.endTime = endTime;
 	}
+
+	
+
+	public Integer getWorkHoursRecordID() {
+		return workHoursRecordID;
+	}
+
+
+
+	public void setWorkHoursRecordID(Integer workHoursRecordID) {
+		this.workHoursRecordID = workHoursRecordID;
+	}
+
+
 
 	public Integer getDepartmentID() {
 		return departmentID;

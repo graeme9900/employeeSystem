@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=BIG5"
-    pageEncoding="BIG5"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,53 +8,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Work Hours Information</title>
+    <script type="text/javascript">
+    	function updateWorkHoursRecord(workHoursRecordID) {
+    		var employeeID = document.getElementById("employeeID_"+workHoursRecordID).value;
+    		var startTime = document.getElementById("startTime_"+workHoursRecordID).value;
+    		var endTime = document.getElementById("endTime_"+workHoursRecordID).value;
+    		
+    		window.location.href="./modifyAndDeleteWorkHoursRecord/updata?workHoursRecordID=" + workHoursRecordID +
+    																		   "&employeeID=" + employeeID +
+    																		   "&startTime=" + encodeURIComponent(startTime) +
+    																		   "&endTime=" + encodeURIComponent(endTime);
+    		
+    	}
+    	
+		function deleteWorkHoursRecord(workHoursRecordID) {
+			window.location.href="./modifyAndDeleteWorkHoursRecord/delete?workHoursRecordID=" + workHoursRecordID;
+    		
+    	}
+    </script>
 </head>
 <body>
 
 <div class="container mt-5 text-center">
-    <h2>¤u®Éªí</h2>
+    <h2>å·¥æ™‚è¡¨</h2>
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th>³¡ªù½s¸¹</th>
-            <th>­û¤u½s¸¹</th>
-            <th>¤é´Á</th>
-            <th>¶}©l®É¶¡</th>
-            <th>µ²§ô®É¶¡</th>
-            <th>¤p®É</th>
-            <th>­×§ï</th>
-            <th>§R°£</th>
+            <th>éƒ¨é–€ç·¨è™Ÿ</th>
+            <th>å“¡å·¥ç·¨è™Ÿ</th>
+            <th>é–‹å§‹æ™‚é–“</th>
+            <th>çµæŸæ™‚é–“</th>
+            <th>ä¿®æ”¹</th>
+            <th>åˆªé™¤</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>${departmentID}</td>
-            <td>${employeeID}</td>
-            <td>${workDate}</td>
-            <td>${startTime}</td>
-            <td>${endTime}</td>
-            <td>${hours}</td>
-            <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editWorkHoursModal">­×§ï</button>
-            </td>
-            <td>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteWorkHoursModal">§R°£</button>
-            </td>
-        </tr>
-        <!-- Add more rows for additional work hours data -->
+        <c:forEach items="${ workHoursRecordList }" var="workHoursRecord" varStatus="status">
+	        <tr>
+	            <td>${workHoursRecord.getDepartmentID()}</td>
+	            <td>
+	      
+	            <input type="text" 
+	                   class="form-control" 
+	                   id="employeeID_${ workHoursRecord.getWorkHoursRecordID() }" 
+	                   name="employeeID_${ workHoursRecord.getWorkHoursRecordID() }" 
+	                   value="${workHoursRecord.getEmployeeID()}">
+	            </td>
+	            
+	            <td>
+		            <input 
+		            type="datetime-local" 
+		            class="form-control" 
+		            id="startTime_${ workHoursRecord.getWorkHoursRecordID() }" 
+		            name="startTime_${ workHoursRecord.getWorkHoursRecordID() }" 
+		            value="${workHoursRecord.getStartTime()}">
+	            </td>
+	            <td>
+		            <input 
+			         type="datetime-local" 
+			         class="form-control" 
+			         id="endTime_${ workHoursRecord.getWorkHoursRecordID() }" 
+			         name="endTime_${ workHoursRecord.getWorkHoursRecordID() }" 
+			         value="${ workHoursRecord.getEndTime() }">
+	            </td>
+	            <td>
+	                <button class="btn btn-warning btn-sm" onclick="updateWorkHoursRecord(${ workHoursRecord.getWorkHoursRecordID() })">ä¿®æ”¹</button>
+	            </td>
+	            <td>
+	                <button class="btn btn-danger btn-sm" onclick="deleteWorkHoursRecord(${ workHoursRecord.getWorkHoursRecordID() })">åˆªé™¤</button>
+	            </td>
+	        </tr>
+        </c:forEach>
+        
+
         </tbody>
     </table>
+    <div class="row">
+        <a href="./modifyAndDeleteWorkHoursRecord/add" class=" btn btn-success col mt-3 mb-3 text-end" >å¢åŠ +</a>
+    </div>
 </div>
 
-<!-- Modal for Edit Work Hours -->
-<div class="modal fade" id="editWorkHoursModal" tabindex="-1" role="dialog" aria-labelledby="editWorkHoursModalLabel" aria-hidden="true">
-    <!-- Add modal content for editing work hours information -->
-</div>
 
-<!-- Modal for Delete Work Hours -->
-<div class="modal fade" id="deleteWorkHoursModal" tabindex="-1" role="dialog" aria-labelledby="deleteWorkHoursModalLabel" aria-hidden="true">
-    <!-- Add modal content for confirming deletion of work hours -->
-</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
