@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Department Information</title>
+    <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
     <script type="text/javascript">
     	function updateDepartmeantInfo(departmentID) {
     		var departmentName = document.getElementById("departmentName_"+departmentID).value;
@@ -26,6 +27,7 @@
     
 </head>
 <body>
+<%@ include file="../../../backendheader.jspf" %>
 
 <div class="container mt-5 text-center">
     <h2>部門資料</h2>
@@ -56,10 +58,10 @@
 	            </td>
 	            <td>${ managerNameList[status.index] }</td>
 	            <td>
-	                <button class="btn btn-primary" onclick="updateDepartmeantInfo(${ departmeantInfo.getDepartmentID() })">修改</button>
+	                <button class="btn btn-warning btn-primary" onclick="updateDepartmeantInfo(${ departmeantInfo.getDepartmentID() })">修改</button>
 	            </td>
 	            <td>
-	                <button class="btn btn-primary" onclick="deleteDepartmeantInfo(${ departmeantInfo.getDepartmentID() })">刪除</button>
+	                <button class="btn btn-danger btn-primary" onclick="deleteDepartmeantInfo(${ departmeantInfo.getDepartmentID() })">刪除</button>
 	            </td>
 	        </tr>
         </c:forEach>
@@ -69,6 +71,9 @@
         <a href="./modifyAndDeleteDepartmentInformation/add" class=" btn btn-success col mt-3 mb-3 text-end" >增加+</a>
     </div>
 </div>
+	<div class="bottom-element">
+		<%@ include file="../../../footer.jspf"%>
+	</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>

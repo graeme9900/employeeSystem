@@ -17,21 +17,10 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 	<link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
 	
+
+
 		
-	<script type="text/javascript">
-		function checkChoeseValue(checkboxId) {
-			
-		    var checkbox = document.getElementById(checkboxId);
-		
-		    var value = checkbox.checked ? "true" : "false";
-		
-		    checkbox.value = value;
-		
-		
-		}
-		
-		
-	</script>
+
 
 </head>
 
@@ -43,32 +32,29 @@
 			<div class="col-md-6">
 				<div class="card">
 					<div class="card-body">
-						<h4 class="card-title text-center">請假表單</h4>
-						<form method="post" action="./leaveForm/add">
+						<h4 class="card-title text-center">簽到表單</h4>
+						<form method="post" action="./attendanceForm/add">
 							<div class="mb-3">
-								<label for="employeeId" class="form-label">員工號</label> <input
+								<label for="employeeId" class="form-label">員工號碼</label>
+								
+								<input
 									type="text" class="form-control" id="employeeId"
 									name="employeeId" required>
 							</div>
 							<div class="mb-3">
-								<label for="leaveStartDate" class="form-label">請假開始時間</label> <input
-									type="datetime-local" class="form-control" id="leaveStartDate"
-									name="leaveStartDate" required>
+								<label for="checkInTime" class="form-label">簽到時間</label> <input
+									type="datetime-local" class="form-control" id="checkInTime"
+									name="checkInTime" required>
 							</div>
 							<div class="mb-3">
-								<label for="hours" class="form-label">請假小時</label> <input
-									type="number" class="form-control" id="hours" name="hours"
-									min="1" required>
+								<label for="checkOutTime" class="form-label">簽退時間</label> <input
+									type="datetime-local" class="form-control" id="checkOutTime"
+									name="checkOutTime">
 							</div>
-							<div class="text-center mb-3">
-								
-									<label for="approval" class="form-label">簽核:</label>
-								<h4>
-									<input type="checkbox" class="form-check-input" id="approval" name="approval" onchange="checkChoeseValue('approval')" value="false" >
-								</h4>
-							</div>
-							<button type="submit" class="btn btn-primary w-100" >增加請假</button>
-<!-- 							onclick="addLeaveRecord()" -->
+							<p class="text-danger">如有簽到，將會自動簽退</p>
+							<button type="submit" class="btn btn-primary w-100" >新增簽到</button>
+							
+
 						</form>
 					</div>
 				</div>

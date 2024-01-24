@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Work Hours Information</title>
+    <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
     <script type="text/javascript">
     	function updateWorkHoursRecord(workHoursRecordID) {
     		var employeeID = document.getElementById("employeeID_"+workHoursRecordID).value;
@@ -28,7 +29,7 @@
     </script>
 </head>
 <body>
-
+<%@ include file="../../../backendheader.jspf" %>
 <div class="container mt-5 text-center">
     <h2>工時表</h2>
     <table class="table table-bordered">
@@ -87,6 +88,10 @@
         <a href="./modifyAndDeleteWorkHoursRecord/add" class=" btn btn-success col mt-3 mb-3 text-end" >增加+</a>
     </div>
 </div>
+
+	<div class="bottom-element">
+		<%@ include file="../../../footer.jspf"%>
+	</div>
 
 
 

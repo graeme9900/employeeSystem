@@ -1,19 +1,20 @@
 package spring_mvc.employee_management.model.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class AttendanceTable {
 
 	private Integer attendanceID;
 	private Integer employeeID;
-	private LocalDate checkInTime;
-	private LocalDate checkOutTime;
+	private LocalDateTime checkInTime;
+	private LocalDateTime checkOutTime;
 	
 	public AttendanceTable() {
 		super();
 	}
 
-	public AttendanceTable(Integer attendanceID, Integer employeeID, LocalDate checkInTime, LocalDate checkOutTime) {
+	public AttendanceTable(Integer attendanceID, Integer employeeID, LocalDateTime checkInTime, LocalDateTime checkOutTime) {
 		super();
 		this.attendanceID = attendanceID;
 		this.employeeID = employeeID;
@@ -37,19 +38,19 @@ public class AttendanceTable {
 		this.employeeID = employeeID;
 	}
 
-	public LocalDate getCheckInTime() {
+	public LocalDateTime getCheckInTime() {
 		return checkInTime;
 	}
 
-	public void setCheckInTime(LocalDate checkInTime) {
+	public void setCheckInTime(LocalDateTime checkInTime) {
 		this.checkInTime = checkInTime;
 	}
 
-	public LocalDate getCheckOutTime() {
+	public LocalDateTime getCheckOutTime() {
 		return checkOutTime;
 	}
 
-	public void setCheckOutTime(LocalDate checkOutTime) {
+	public void setCheckOutTime(LocalDateTime checkOutTime) {
 		this.checkOutTime = checkOutTime;
 	}
 

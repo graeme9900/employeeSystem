@@ -1,55 +1,86 @@
-<%@ page language="java" contentType="text/html; charset=BIG5"
-    pageEncoding="BIG5"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Ã±¨ìªí</title>
+    <title>ç°½åˆ°è¡¨</title>
+    <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
+    <script type="text/javascript">
+    	function updateAttendanceTable(attendanceID) {
+    		var checkInTime = document.getElementById("checkInTime_"+attendanceID).value;
+    		var checkOutTime = document.getElementById("checkOutTime_"+attendanceID).value;
+    		
+    		window.location.href="./modifyAndDeleteAttendanceTable/updata?attendanceID=" + attendanceID +
+    																		   "&checkInTime=" + encodeURIComponent(checkInTime) +
+    																		   "&checkOutTime=" + encodeURIComponent(checkOutTime);
+    		
+    	}
+    	
+		function deleteAttendanceTable(attendanceID) {
+			window.location.href="./modifyAndDeleteAttendanceTable/delete?attendanceID=" + attendanceID;
+    		
+    	}
+    </script>
 </head>
 <body>
+	<%@ include file="../../../backendheader.jspf" %>
 
-<div class="container mt-5 text-center">
-    <h2>Ã±¨ìªí</h2>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>¥X®u½s¸¹</th>
-            <th>­û¤u½s¸¹</th>
-            <th>Ã±¨ì®É¶¡</th>
-            <th>Ã±°h®É¶¡</th>
-            <th>­×§ï</th>
-            <th>§R°£</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>${attendanceID}</td>
-            <td>${employeeID}</td>
-            <td>${checkInTime}</td>
-            <td>${checkOutTime}</td>
-            <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editAttendanceModal">­×§ï</button>
-            </td>
-            <td>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteAttendanceModal">§R°£</button>
-            </td>
-        </tr>
-        <!-- Add more rows for additional attendance data -->
-        </tbody>
-    </table>
-</div>
+	<div class="container mt-5 text-center">
+	    <h2>ç°½åˆ°è¡¨</h2>
+	    <table class="table table-bordered">
+	        <thead>
+	        <tr>
+	            <th>ç°½åˆ°ç·¨è™Ÿ</th>
+	            <th>å“¡å·¥ç·¨è™Ÿ</th>
+	            <th>ç°½åˆ°æ™‚é–“</th>
+	            <th>ç°½é€€æ™‚é–“</th>
+	            <th>ä¿®æ”¹</th>
+	            <th>åˆªé™¤</th>
+	        </tr>
+	        </thead>
+	        <tbody>
+	        <c:forEach items="${ attendanceTableList }" var="attendanceTable">
+		        <tr>
+		            <td>${ attendanceTable.getAttendanceID() }</td>
+		            <td>${ attendanceTable.getEmployeeID() }</td>
+		            <td>
+		            	<input 
+				         type="datetime-local" 
+				         class="form-control" 
+				         id="checkInTime_${ attendanceTable.getAttendanceID() }" 
+				         name="checkInTime_${ attendanceTable.getAttendanceID() }" 
+				         value="${ attendanceTable.getCheckInTime() }">
+		            </td>
+		            <td>
+		            	<input 
+				         type="datetime-local" 
+				         class="form-control" 
+				         id="checkOutTime_${ attendanceTable.getAttendanceID() }" 
+				         name="checkOutTime_${ attendanceTable.getAttendanceID() }" 
+				         value="${ attendanceTable.getCheckOutTime() }">
+		            </td>
+					<td>
+						<button class="btn btn-warning btn-sm" onclick="updateAttendanceTable(${ attendanceTable.getAttendanceID() })">ä¿®æ”¹</button>
+					</td>
+					<td>
+			            <button class="btn btn-danger btn-sm" onclick="deleteAttendanceTable(${ attendanceTable.getAttendanceID() })">åˆªé™¤</button>
+			        </td>
+		        </tr>
+			</c:forEach>
+	        </tbody>
+	    </table>
+	    <div class="row">
+       		<a href="./attendanceForm" class=" btn btn-success col mt-3 mb-3 text-end" >å¢žåŠ +</a>
+    	</div>
+	</div>
+	<div class="bottom-element">
+		<%@ include file="../../../footer.jspf"%>
+	</div>
 
-<!-- Modal for Edit Attendance -->
-<div class="modal fade" id="editAttendanceModal" tabindex="-1" role="dialog" aria-labelledby="editAttendanceModalLabel" aria-hidden="true">
-    <!-- Add modal content for editing attendance information -->
-</div>
-
-<!-- Modal for Delete Attendance -->
-<div class="modal fade" id="deleteAttendanceModal" tabindex="-1" role="dialog" aria-labelledby="deleteAttendanceModalLabel" aria-hidden="true">
-    <!-- Add modal content for confirming deletion of attendance -->
-</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>

@@ -40,7 +40,7 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 				+ "VALUES\n" + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		String sql2 = "UPDATE employeeInfo\r\n" + "SET account = CONCAT('user_', employeeID)\r\n"
-				+ "WHERE employeeID = LAST_INSERT_ID();";
+				+ "WHERE employeeID = ?";
 
 		jdbcTemplate.update(sql1, employee.getEmployeeID(), employee.getPersonName(), employee.getDepartmentID(), employee.getPosition(),
 				employee.getPositionrank(), employee.getSalary(), employee.getBirthday(), employee.getEmail(),
@@ -52,7 +52,7 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 			e.printStackTrace();
 		}
 
-		jdbcTemplate.update(sql2);
+		jdbcTemplate.update(sql2, employee.getEmployeeID());
 
 	}
 
@@ -633,7 +633,7 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 		return null;
 	}
 	
-	// 用部門ID查詢工時記錄
+	// 用查詢所有工時記錄
 	@Override
 	public List<WorkHoursRecord> findAllWorkHoursRecord() {
 		String sql = "select \r\n" + "workHoursRecordID, departmentID, employeeID, startTime, endTime\r\n"
@@ -655,8 +655,16 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 	}
 
 	// -------- 簽到表 --------
-
+	
 	// 添加簽到
+	@Override
+	public void addAttendanceTableCanNull(AttendanceTable attendanceTable) {
+		String sql = "INSERT INTO AttendanceTable (attendanceID, employeeID, checkInTime, checkOutTime) \r\n"
+					+ "values (?, ?, ?, ?);";
+		jdbcTemplate.update(sql, attendanceTable.getAttendanceID(), attendanceTable.getEmployeeID(), attendanceTable.getCheckInTime(), attendanceTable.getCheckOutTime());
+	}
+
+	// 簽到
 	@Override
 	public void addAttendanceTable(AttendanceTable attendanceTable) {
 		String sql = "INSERT INTO AttendanceTable (attendanceID, employeeID, checkInTime) \r\n"
@@ -666,12 +674,23 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 
 	// 刪除簽到
 	@Override
-	public void deleteAttendanceTable(Integer employeeID) {
-		// TODO Auto-generated method stub
+	public void deleteAttendanceTable(Integer attendanceID) {
+		String sql = "delete from attendanceTable where attendanceID = ?";
+		jdbcTemplate.update(sql, attendanceID);
+
+	}
+	
+	// 修改簽到
+	@Override
+	public void updateAttendanceTableAllData(AttendanceTable attendanceTable) {
+		String sql = "UPDATE attendanceTable\r\n"
+					+ "SET checkInTime = ?, checkOutTime = ?\r\n"
+					+ "WHERE attendanceID = ?";
+		jdbcTemplate.update(sql, attendanceTable.getCheckInTime(), attendanceTable.getCheckOutTime(), attendanceTable.getAttendanceID());
 
 	}
 
-	// 修改簽到
+	// 簽退
 	@Override
 	public void updateAttendanceTable(AttendanceTable attendanceTable) {
 		String sql = "UPDATE attendanceTable\n" + "SET\n" + "checkOutTime = NOW()\n" + "WHERE attendanceID = ?";
@@ -679,18 +698,39 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 
 	}
 
-	// 用employee修改簽到
+	// 用employeeInfo修改簽到
 	@Override
 	public void updateAttendanceTableByEmployee(EmployeeInfo employeeInfo) {
 		String sql = "UPDATE attendanceTable\n" + "SET\n" + "checkOutTime = NOW()\n" + "WHERE attendanceID = ?";
 		jdbcTemplate.update(sql, employeeInfo.getNowSignInNumber());
 
 	}
+	
 
 	// 查詢簽到
 	@Override
-	public Optional<AttendanceTable> findAttendanceTable(Integer employeeID) {
-		return null;
+	public Optional<AttendanceTable> findAttendanceTable(Integer attendanceID) {
+		String sql = "SELECT attendanceID, employeeID, checkInTime, checkOutTime \r\n"
+					+ "FROM attendancetable\r\n"
+					+ "where attendanceID = ?";
+		try {
+			AttendanceTable attendanceTable= jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(AttendanceTable.class), attendanceID);
+			return Optional.ofNullable(attendanceTable);
+		} catch (EmptyResultDataAccessException e) {
+			return Optional.empty();
+		}
+	}
+	
+	// 用查詢所有簽到
+	@Override
+	public List<AttendanceTable> findAllAttendanceTable() {
+		String sql = "SELECT attendanceID, employeeID, checkInTime, checkOutTime FROM mytopicsdb.attendancetable;";
+
+		List<AttendanceTable> attendanceTableList = jdbcTemplate.query(sql,
+				new BeanPropertyRowMapper<>(AttendanceTable.class));
+
+
+		return attendanceTableList;
 	}
 
 	// -------- 數字資料 --------

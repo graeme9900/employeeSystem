@@ -334,3 +334,16 @@ VALUES
   (3, 3, '2024-01-12T10:30:00', '2024-01-12T19:30:00'),
   (1, 1, '2024-01-13T08:00:00', '2024-01-13T17:00:00');
 
+-- 插入 
+INSERT INTO attendanceTable(attendanceID, employeeID, checkInTime, checkOutTime)
+values
+(1, 1, '2024-01-10T08:00:00', '2024-01-10T17:00:00'),
+(2, 2, '2024-01-10T08:00:00', null);
+
+update employeeInfo
+SET nowSignInNumber=2
+where employeeID = 2;
+
+update integerData
+set number = 1+2
+where dataName = 'latestCheckInNumber';

@@ -214,21 +214,30 @@ public interface EmployeeManagementDao {
  	List<WorkHoursRecord> findAllWorkHoursRecord();
 
     // -------- 簽到表 --------
+ 	
+ 	// 添加簽到
+  	void addAttendanceTableCanNull(AttendanceTable attendanceTable);
     
-    // 添加簽到
+    // 簽到
     void addAttendanceTable(AttendanceTable attendanceTable);
 
     // 刪除簽到
-    void deleteAttendanceTable(Integer employeeID);
+    void deleteAttendanceTable(Integer attendanceID);
 
     // 修改簽到
+ 	void updateAttendanceTableAllData(AttendanceTable attendanceTable);
+    
+    // 簽退
     void updateAttendanceTable(AttendanceTable attendanceTable);
     
-    // 用employee修改簽到
+    // 用employeeInfo修改簽到
  	void updateAttendanceTableByEmployee(EmployeeInfo employeeInfo);
 
     // 查詢簽到
-    Optional<AttendanceTable> findAttendanceTable(Integer employeeID);
+    Optional<AttendanceTable> findAttendanceTable(Integer attendanceID);
+    
+    // 用查詢所有簽到
+ 	List<AttendanceTable> findAllAttendanceTable();
     
     
     

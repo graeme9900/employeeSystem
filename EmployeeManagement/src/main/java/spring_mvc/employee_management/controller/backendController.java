@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import spring_mvc.employee_management.model.dao.EmployeeManagementDao;
+import spring_mvc.employee_management.model.entity.AttendanceTable;
 import spring_mvc.employee_management.model.entity.DepartmentInfo;
 import spring_mvc.employee_management.model.entity.EmployeeInfo;
 import spring_mvc.employee_management.model.entity.IntegerData;
@@ -181,9 +182,10 @@ public class backendController {
 		dao.deleteInterest(employeeInfo.getEmployeeID());
 		dao.addInterest(employeeInfo);
 		
-		// 假單部門修改
+		// 牽扯更改
 		dao.updateLeaveRecordDepartmentIDByEmployeeID(employeeInfo.getEmployeeID(), departmentID);
-
+		dao.deleteWorkHoursRecordByEmployeeID(employeeInfo.getEmployeeID());
+		
 		return "redirect:/mvc/backend/modifyAndDeleteEmployeeInformationMenu";
 	}
 	
@@ -502,10 +504,162 @@ public class backendController {
 	// 簽到表格表單
 	// http://localhost:8080/EmployeeManagement/mvc/backend/modifyAndDeleteAttendanceTable
 	@GetMapping("/modifyAndDeleteAttendanceTable")
-	public String backendModifyAndDeleteAttendanceTable() {
-
+	public String backendModifyAndDeleteAttendanceTable(Model model) {
+		List<AttendanceTable> attendanceTableList = dao.findAllAttendanceTable();
+		model.addAttribute("attendanceTableList", attendanceTableList);
 		return "employee_management/backend/attendanceTable/modifyAndDeleteAttendanceTable";
 	}
 	
+	// 簽到表格修改
+	@GetMapping("/modifyAndDeleteAttendanceTable/updata")
+	public String backendModifyAndDeleteAttendanceTableUpdata(@RequestParam("attendanceID") Integer attendanceID,
+															  @RequestParam("checkInTime") String checkInTimeString,
+															  @RequestParam("checkOutTime") String checkOutTimeString,
+															  Model model,
+															  HttpSession session) {
+
+		LocalDateTime checkInTime;
+		LocalDateTime checkOutTime;
+		
+		try {
+			checkInTime = LocalDateTime.parse(checkInTimeString);
+		} catch (Exception e) {
+			checkInTime = null;
+		}
+		try {
+			checkOutTime = LocalDateTime.parse(checkOutTimeString);
+		} catch (Exception e) {
+			checkOutTime = null;
+		}
+		
+		
+		Optional<AttendanceTable> attendanceTableOpt = dao.findAttendanceTable(attendanceID);
+		AttendanceTable attendanceTable = attendanceTableOpt.get();
+		if (attendanceTable.getCheckOutTime() == null) {
+			
+			Optional<EmployeeInfo> employeeInfoOpt = dao.findEmployeeInfoByEmployeeId(attendanceTable.getEmployeeID());
+			EmployeeInfo employeeInfo = employeeInfoOpt.get();
+			if(!employeeInfo.getNowSignInNumber().equals(0)) {
+				
+				employeeInfo.setNowSignInNumber(0);
+				dao.updateEmployeeInfoNowSignInNumber(employeeInfo);
+				EmployeeInfo userEmployeeInfo = (EmployeeInfo) session.getAttribute("employeeInfo");
+				if (userEmployeeInfo.getEmployeeID().equals(employeeInfo.getEmployeeID())) {
+					
+					session.setAttribute("employeeInfo", employeeInfo);
+				}
+			}
+		}
+		
+		attendanceTable.setCheckInTime(checkInTime);
+		attendanceTable.setCheckOutTime(checkOutTime);
+		
+		dao.updateAttendanceTableAllData(attendanceTable);
+
+		return "redirect:/mvc/backend/modifyAndDeleteAttendanceTable";
+	}
+			
+	// 簽到表格刪除
+	@GetMapping("/modifyAndDeleteAttendanceTable/delete")
+	public String backendModifyAndDeleteAttendanceTableDelete(@RequestParam("attendanceID") Integer attendanceID,
+															  HttpSession session) {
+		Optional<AttendanceTable> attendanceTableOpt = dao.findAttendanceTable(attendanceID);
+		AttendanceTable attendanceTable = attendanceTableOpt.get();
+		
+		
+		Optional<EmployeeInfo> employeeInfoOpt = dao.findEmployeeInfoByEmployeeId(attendanceTable.getEmployeeID());
+		EmployeeInfo employeeInfo = employeeInfoOpt.get();
+		if(!employeeInfo.getNowSignInNumber().equals(0)) {
+			
+			employeeInfo.setNowSignInNumber(0);
+			dao.updateEmployeeInfoNowSignInNumber(employeeInfo);
+			EmployeeInfo userEmployeeInfo = (EmployeeInfo) session.getAttribute("employeeInfo");
+			if (userEmployeeInfo.getEmployeeID().equals(employeeInfo.getEmployeeID())) {
+				
+				session.setAttribute("employeeInfo", employeeInfo);
+			}
+		}
+		
+		dao.deleteAttendanceTable(attendanceID);
+
+		return "redirect:/mvc/backend/modifyAndDeleteAttendanceTable";
+	}
+	
+	// 簽到表格表單
+	// http://localhost:8080/EmployeeManagement/mvc/backend/attendanceForm
+	@GetMapping("/attendanceForm")
+	public String backendAttendanceForm() {
+		
+		return "employee_management/backend/attendanceTable/attendanceForm";
+	}
+		
+	// 簽到表格增加
+	@PostMapping("/attendanceForm/add")
+	public String backendModifyAndDeleteAttendanceTableAdd(@RequestParam("employeeId") Integer employeeId,
+														   @RequestParam("checkInTime") String checkInTimeString,
+														   @RequestParam("checkOutTime") String checkOutTimeString,
+														   HttpSession session) {
+		Optional<IntegerData> integerDataOpt = dao.findIntegerData("latestCheckInNumber");
+		IntegerData integerData = integerDataOpt.get();
+		Integer latestCheckInNumber = integerData.getNumber();
+		
+		integerData.setNumber(latestCheckInNumber + 1);
+		dao.updateIntegerData(integerData);
+		
+		
+		LocalDateTime checkInTime;
+		LocalDateTime checkOutTime;
+		
+		try {
+			checkInTime = LocalDateTime.parse(checkInTimeString);
+		} catch (Exception e) {
+			checkInTime = null;
+		}
+		try {
+			checkOutTime = LocalDateTime.parse(checkOutTimeString);
+		} catch (Exception e) {
+			checkOutTime = null;
+		}
+		
+		Optional<EmployeeInfo> employeeInfoOpt = dao.findEmployeeInfoByEmployeeId(employeeId);
+		EmployeeInfo employeeInfo = employeeInfoOpt.get();
+		if(!employeeInfo.getNowSignInNumber().equals(0)) {
+			AttendanceTable attendanceTableOld = new AttendanceTable();
+			attendanceTableOld.setAttendanceID(employeeInfo.getNowSignInNumber());
+			
+			dao.updateAttendanceTable(attendanceTableOld);
+			employeeInfo.setNowSignInNumber(0);
+			dao.updateEmployeeInfoNowSignInNumber(employeeInfo);
+			
+			EmployeeInfo userEmployeeInfo = (EmployeeInfo) session.getAttribute("employeeInfo");
+			if (userEmployeeInfo.getEmployeeID().equals(employeeInfo.getEmployeeID())) {
+				
+				session.setAttribute("employeeInfo", employeeInfo);
+			}
+		}
+		
+		if(checkOutTime == null) {
+			employeeInfo.setNowSignInNumber(latestCheckInNumber);
+			dao.updateEmployeeInfoNowSignInNumber(employeeInfo);
+			
+			EmployeeInfo userEmployeeInfo = (EmployeeInfo) session.getAttribute("employeeInfo");
+			if (userEmployeeInfo.getEmployeeID().equals(employeeInfo.getEmployeeID())) {
+				
+				session.setAttribute("employeeInfo", employeeInfo);
+			}
+		}
+		
+		
+		AttendanceTable attendanceTable = new AttendanceTable();
+		attendanceTable.setAttendanceID(latestCheckInNumber);
+		attendanceTable.setEmployeeID(employeeId);
+		attendanceTable.setCheckInTime(checkInTime);
+		attendanceTable.setCheckOutTime(checkOutTime);
+		
+		dao.addAttendanceTableCanNull(attendanceTable);
+		
+
+		return "redirect:/mvc/backend/modifyAndDeleteAttendanceTable";
+	}
 	
 }

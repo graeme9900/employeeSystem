@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Employee Information</title>
+    <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
     <script type="text/javascript">
 			function updateEmployeeID(employeeID) {
 				var employeeID = document.getElementById('employeeID_' + employeeID).value;
@@ -47,7 +48,7 @@
 </head>
 
 <body>
-
+	<%@ include file="../../../backendheader.jspf" %>
     <div class="container mt-5">
         <h2 class="text-center">修改刪除員工資料選單</h2>
         
@@ -73,12 +74,12 @@
 	                    <td>${employeeInfo.getPosition()}</td>
 	                    <td>${employeeInfo.getPositionrank()}</td>
 	                    <td>
-	                        <button class="btn btn-secondary"
+	                        <button class="btn btn-secondary btn-primary"
 	                     onclick="updateEmployeeID(${ employeeInfo.getEmployeeID() })"
 	                     id="employeeID_${ employeeInfo.getEmployeeID() }" value="${ employeeInfo.getEmployeeID() }">詳細修改</button>
 	                    </td>
 	                    <td>
-	                        <button class="btn btn-primary" 
+	                        <button class="btn btn-danger btn-primary" 
 	                        onclick="deleteEmployeeID(${ employeeInfo.getEmployeeID() })"
 	                     	id="employeeID_${ employeeInfo.getEmployeeID() }" value="${ employeeInfo.getEmployeeID() }">刪除</button>
 	                    </td>
@@ -91,6 +92,10 @@
         	<a href="./addEmployeeInformation" class=" btn btn-success col mt-3 mb-3 text-end" >增加+</a>
         </div>
     </div>
+    
+    <div class="bottom-element">
+		<%@ include file="../../../footer.jspf"%>
+	</div>
 
 	
 

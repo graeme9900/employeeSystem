@@ -8,9 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Leave Information</title>
-</head>
-<body>
-<script type="text/javascript">
+    <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
+    <script type="text/javascript">
 		function checkChoeseValue(checkboxId) {
 		
 		    var checkbox = document.getElementById(checkboxId);
@@ -37,7 +36,10 @@
     		
     	}
     </script>
+</head>
+<body>
 
+<%@ include file="../../../backendheader.jspf" %>
 <div class="container mt-5 text-center">
     <h2>請假表單</h2>
     <table class="table table-bordered">
@@ -71,10 +73,10 @@
 			            </h4>
 		            </td>
 		            <td>
-	                <button class="btn btn-primary" onclick="updateLeaveRecord(${ leaveRecord.getLeaveNumber() })">修改</button>
+	                <button class="btn btn-warning btn-primary" onclick="updateLeaveRecord(${ leaveRecord.getLeaveNumber() })">修改</button>
 	            </td>
 	            <td>
-	                <button class="btn btn-primary" onclick="deleteLeaveRecord(${ leaveRecord.getLeaveNumber() })">刪除</button>
+	                <button class="btn btn-danger btn-primary" onclick="deleteLeaveRecord(${ leaveRecord.getLeaveNumber() })">刪除</button>
 	            </td>
 		        </tr>
 			</c:forEach>
@@ -84,6 +86,9 @@
        	<a href="./leaveForm" class=" btn btn-success col mt-3 mb-3 text-end" >增加+</a>
     </div>
 </div>
+	<div class="bottom-element">
+		<%@ include file="../../../footer.jspf"%>
+	</div>
 
 
 
