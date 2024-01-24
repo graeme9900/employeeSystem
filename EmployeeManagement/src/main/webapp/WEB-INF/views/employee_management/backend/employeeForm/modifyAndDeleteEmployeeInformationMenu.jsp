@@ -49,7 +49,7 @@
 
 <body>
 	<%@ include file="../../../backendheader.jspf" %>
-    <div class="container mt-5">
+    <div class="container mt-5 text-center">
         <h2 class="text-center">修改刪除員工資料選單</h2>
         
         <table class="table table-bordered text-center">
@@ -89,7 +89,7 @@
         </table>
 
          <div class="row">
-        	<a href="./addEmployeeInformation" class=" btn btn-success col mt-3 mb-3 text-end" >增加+</a>
+        	<a href="./addEmployeeInformation" class=" btn btn-success mt-3 mb-3" >增加+</a>
         </div>
     </div>
     

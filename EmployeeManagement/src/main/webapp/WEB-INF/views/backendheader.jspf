@@ -56,9 +56,7 @@
                   </li>
                 </ul>
                 
-                <div class="d-flex">
-                  <a href="/EmployeeManagement/mvc/frontend/dataMenu"><i class="bi bi-person-circle fs-3"></i></a>
-                </div>
+
                 
 
               </div>

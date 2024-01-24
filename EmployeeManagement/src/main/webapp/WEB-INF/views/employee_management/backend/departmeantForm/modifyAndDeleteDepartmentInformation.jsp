@@ -29,7 +29,7 @@
 <body>
 <%@ include file="../../../backendheader.jspf" %>
 
-<div class="container mt-5 text-center">
+<div class="container text-center">
     <h2>部門資料</h2>
     <table class="table table-bordered">
         <thead>
@@ -68,7 +68,7 @@
         </tbody>
     </table>
     <div class="row">
-        <a href="./modifyAndDeleteDepartmentInformation/add" class=" btn btn-success col mt-3 mb-3 text-end" >增加+</a>
+        <a href="./modifyAndDeleteDepartmentInformation/add" class=" btn btn-success mt-3 mb-3" >增加+</a>
     </div>
 </div>
 	<div class="bottom-element">

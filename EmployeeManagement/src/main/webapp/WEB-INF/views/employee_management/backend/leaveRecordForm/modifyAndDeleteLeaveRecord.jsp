@@ -83,7 +83,7 @@
         </tbody>
     </table>
     <div class="row">
-       	<a href="./leaveForm" class=" btn btn-success col mt-3 mb-3 text-end" >增加+</a>
+       	<a href="./leaveForm" class=" btn btn-success mt-3 mb-3" >增加+</a>
     </div>
 </div>
 	<div class="bottom-element">
