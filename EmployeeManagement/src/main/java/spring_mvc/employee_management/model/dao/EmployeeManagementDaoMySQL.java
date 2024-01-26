@@ -65,6 +65,7 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 		this.deleteInterest(employeeId);
 		this.deleteLeaveRecordByEmployeeID(employeeId);
 		this.deleteWorkHoursRecordByEmployeeID(employeeId);
+		this.deleteAttendanceTableByEmployeeID(employeeId);
 		
 		
 		List<DepartmentInfo> departmentInfoList = this.findDepartmentInfosByManagerID(employeeId);
@@ -677,6 +678,14 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 	public void deleteAttendanceTable(Integer attendanceID) {
 		String sql = "delete from attendanceTable where attendanceID = ?";
 		jdbcTemplate.update(sql, attendanceID);
+
+	}
+	
+	// 用員工刪除簽到
+	@Override
+	public void deleteAttendanceTableByEmployeeID(Integer employeeID) {
+		String sql = "delete from attendanceTable where employeeID = ?";
+		jdbcTemplate.update(sql, employeeID);
 
 	}
 	

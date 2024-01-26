@@ -46,10 +46,10 @@ public interface EmployeeManagementDao {
 
     /**
      *  6.用id查詢員工資訊
-     * @param employeeId
+     * @param employeeID
      * @return 員工資訊(Opt)
      */
-    Optional<EmployeeInfo> findEmployeeInfoByEmployeeId(Integer employeeId);
+    Optional<EmployeeInfo> findEmployeeInfoByEmployeeId(Integer employeeID);
     
     /**
      *  7.用帳號查詢員工資訊
@@ -223,6 +223,9 @@ public interface EmployeeManagementDao {
 
     // 刪除簽到
     void deleteAttendanceTable(Integer attendanceID);
+    
+    // 用員工刪除簽到
+ 	void deleteAttendanceTableByEmployeeID(Integer employeeID);
 
     // 修改簽到
  	void updateAttendanceTableAllData(AttendanceTable attendanceTable);

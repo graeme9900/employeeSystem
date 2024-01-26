@@ -244,6 +244,19 @@ VALUES
 ('employeeID', 1),
 ('departmentID', 0);
 
+-- 插入八筆部門資訊
+INSERT INTO departmentInfo (departmentID, departmentName, employeeCount, managerID) VALUES 
+(0, '無部門', 0, 0),
+(1, '行政部門', 0, 1),
+(2, '財務部門', 0, 2),
+(3, '銷售與市場部門', 0, 3),
+(4, '研發與創新部門', 0, 0),
+(5, '生產與製造部門', 0, 0),
+(6, '客戶服務部門', 0, 0),
+(7, '資訊技術部門', 0, 0),
+(8, '法務與合規部門', 0, 0);
+UPDATE integerData SET number = 0+9 WHERE dataName = 'departmentID';
+
 
 -- 插入 EmployeeInfo 資料
 INSERT INTO employeeInfo (employeeID, personName, departmentID, position, positionrank, hireDate, salary, birthday, email, phone)
@@ -251,23 +264,36 @@ VALUES
 (1, 'John Doe', 1, 'Software Engineer', 'Senior', '2022-01-15', 80000, '1990-05-20', 'john@example.com', '1234567890');
 UPDATE employeeInfo
 SET account = CONCAT('user_', employeeID)
-WHERE employeeID = LAST_INSERT_ID();
+WHERE employeeID = 1;
 
 INSERT INTO employeeInfo (employeeID, personName, departmentID, position, positionrank, hireDate, salary, birthday, email, phone)
 VALUES
 (2, 'Jane Smith', 2, 'Marketing Manager', 'Manager', '2022-02-20', 90000, '1985-08-10', 'jane@example.com', '9876543210');
 UPDATE employeeInfo
 SET account = CONCAT('user_', employeeID)
-WHERE employeeID = LAST_INSERT_ID();
+WHERE employeeID = 2;
 
 INSERT INTO employeeInfo (employeeID, personName, departmentID, position, positionrank, salary, birthday, email, phone)
 VALUES
 (3, 'Bob Johnson', 3, 'Sales Representative', 'Junior', 70000, '1992-12-05', 'bob@example.com', '5551234567');
 UPDATE employeeInfo
 SET account = CONCAT('user_', employeeID)
-WHERE employeeID = LAST_INSERT_ID();
+WHERE employeeID = 3;
 
 UPDATE integerData SET number = 1+3 WHERE dataName = 'employeeID';
+update departmentInfo set employeeCount = 0+1 where departmentID = 1;
+update departmentInfo set employeeCount = 0+1 where departmentID = 2;
+update departmentInfo set employeeCount = 0+1 where departmentID = 3;
+
+-- 權限變更
+
+UPDATE employeeInfo
+SET permissions = 2
+WHERE employeeID = 2;
+
+UPDATE employeeInfo
+SET permissions = 3
+WHERE employeeID = 3;
 
 
 
@@ -295,19 +321,6 @@ INSERT INTO interest (employeeID, interest) VALUES
 (2, 'Traveling, Photography'),
 (3, 'Sports, Music');
 
-
--- 插入八筆部門資訊
-INSERT INTO departmentInfo (departmentID, departmentName, employeeCount, managerID) VALUES 
-(0, '無部門', 0, 0),
-(1, '行政部門', 20, 1),
-(2, '財務部門', 15, 1),
-(3, '銷售與市場部門', 30, 1),
-(4, '研發與創新部門', 25, 2),
-(5, '生產與製造部門', 50, 2),
-(6, '客戶服務部門', 40, 2),
-(7, '資訊技術部門', 35, 3),
-(8, '法務與合規部門', 10, 3);
-UPDATE integerData SET number = 0+9 WHERE dataName = 'departmentID';
 
 -- 插入 leaveRecord 資料
 INSERT INTO leaveRecord (employeeID, departmentID, leaveStartDate, hours, approval) VALUES

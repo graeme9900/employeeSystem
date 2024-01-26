@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Work Hours Information</title>
+    <title>員工管理系統</title>
     <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
     <script type="text/javascript">
     	function updateWorkHoursRecord(workHoursRecordID) {

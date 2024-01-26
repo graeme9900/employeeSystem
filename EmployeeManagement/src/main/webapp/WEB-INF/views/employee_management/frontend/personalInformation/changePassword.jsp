@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
-    <title>修改密碼</title>
+    <title>員工管理系統</title>
 	<link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
 </head>
 

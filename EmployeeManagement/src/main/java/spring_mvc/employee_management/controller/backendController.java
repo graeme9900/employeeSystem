@@ -74,7 +74,20 @@ public class backendController {
 			return "redirect:/mvc/backend/modifyAndDeleteEmployeeInformationMenu";
 			
 		} else {
+			Optional<EmployeeInfo> employeeInfoOpt = dao.findEmployeeInfoByEmployeeId(employeeID);
+			EmployeeInfo employeeInfo = employeeInfoOpt.get();
+			Integer departmentID = employeeInfo.getDepartmentID();
+			
+			
+			Optional<DepartmentInfo> departmentInfoOpt = dao.findDepartmentInfo(departmentID);
+			DepartmentInfo departmentInfo = departmentInfoOpt.get();
+			Integer employeeCount = departmentInfo.getEmployeeCount();
+			departmentInfo.setEmployeeCount(employeeCount-1);
+			
+			dao.updateDepartmentInfo(departmentInfo);
+			
 			dao.deleteEmployeeInfo(employeeID);
+			
 			
 			// 提示
 			model.addAttribute("errorMessage", "刪除成功");
@@ -124,9 +137,11 @@ public class backendController {
 	
 	
 	
-	// 修改表單
+	// 再詳細裡修改表單
 	@GetMapping("/modifyAndDeleteEmployeeInformation/updata")
-	public String backendModifyAndDeleteEmployeeInformationDelete(@RequestParam("personName") String personName,
+	public String backendModifyAndDeleteEmployeeInformationDelete(
+			@RequestParam("employeeID") Integer employeeID,
+			@RequestParam("personName") String personName,
 			@RequestParam("departmentID") Integer departmentID,
 			@RequestParam("position") String position,
 			@RequestParam("positionrank") String positionrank,
@@ -144,7 +159,9 @@ public class backendController {
 
 		EmployeeInfo employeeInfo;
 		try {
-			employeeInfo = (EmployeeInfo) session.getAttribute("employeeInfo");
+//			employeeInfo = (EmployeeInfo) session.getAttribute("employeeInfo");
+			Optional<EmployeeInfo> employeeInfoOpt = dao.findEmployeeInfoByEmployeeId(employeeID);
+			employeeInfo = employeeInfoOpt.get();
 		} catch (Exception e) {
 			return "redirect:/mvc/backend/index";
 
@@ -204,6 +221,19 @@ public class backendController {
 			return "redirect:/mvc/backend/modifyAndDeleteEmployeeInformation";
 			
 		} else {
+			Optional<EmployeeInfo> employeeInfoOpt = dao.findEmployeeInfoByEmployeeId(employeeID);
+			EmployeeInfo employeeInfo = employeeInfoOpt.get();
+			Integer departmentID = employeeInfo.getDepartmentID();
+			
+			
+			Optional<DepartmentInfo> departmentInfoOpt = dao.findDepartmentInfo(departmentID);
+			DepartmentInfo departmentInfo = departmentInfoOpt.get();
+			Integer employeeCount = departmentInfo.getEmployeeCount();
+			departmentInfo.setEmployeeCount(employeeCount-1);
+			
+			dao.updateDepartmentInfo(departmentInfo);
+			
+			
 			dao.deleteEmployeeInfo(employeeID);
 			
 			// 提示
@@ -229,7 +259,7 @@ public class backendController {
 	
 
 	
-	// 增加表單
+	// 增加員工表單
 	@GetMapping("/addEmployeeInformation/add")
 	public String backendAddEmployeeInformationAdd(@RequestParam("personName") String personName,
 			@RequestParam("departmentID") Integer departmentID, @RequestParam("position") String position,
@@ -275,7 +305,13 @@ public class backendController {
 		dao.addWorkExperience(employeeInfo);
 		dao.addSkill(employeeInfo);
 		dao.addInterest(employeeInfo);
-
+		
+		Optional<DepartmentInfo> departmentInfoOpt = dao.findDepartmentInfo(departmentID);
+		DepartmentInfo departmentInfo = departmentInfoOpt.get();
+		departmentInfo.setEmployeeCount(departmentInfo.getEmployeeCount()+1);
+		dao.updateDepartmentInfo(departmentInfo);
+		
+		
 		return "redirect:/mvc/backend/modifyAndDeleteEmployeeInformationMenu";
 	}
 	

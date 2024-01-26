@@ -7,11 +7,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>員工管理頁面</title>
+    <title>員工管理系統</title>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
+    
     <script type="text/javascript">
   
     function addInput(containerId) {
@@ -48,6 +48,7 @@
     
     function updataEmployeeInfo() {
     	
+    	var employeeID;
     	var personName;
     	var departmentID;
     	var position;
@@ -68,6 +69,7 @@
     	var divElement;
     	var inputElements;
     	
+    	employeeID = document.getElementById("employeeID").value;
     	personName = document.getElementById("name").value;
     	
     	departmentID = document.getElementById("departmentID").value;
@@ -115,7 +117,8 @@
     	
 
 
-    	window.location.href='./modifyAndDeleteEmployeeInformation/updata?personName=' + encodeURIComponent(personName) +
+    	window.location.href='./modifyAndDeleteEmployeeInformation/updata?employeeID=' + encodeURIComponent(employeeID) +
+    	'&personName=' + encodeURIComponent(personName) +
     	'&departmentID=' + encodeURIComponent(departmentID) +
     	'&position=' + encodeURIComponent(position) +
     	'&positionrank=' + encodeURIComponent(level) +
