@@ -5,9 +5,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.Random;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import spring_mvc.employee_management.model.dao.EmployeeManagementDao;
+import spring_mvc.employee_management.model.entity.ConstantData;
 import spring_mvc.employee_management.model.entity.EmployeeInfo;
+import spring_mvc.employee_management.util.KeyUtil;
 
 // 登入與註冊控制
 @Controller
@@ -47,7 +51,7 @@ public class loginController {
 			 				 @RequestParam("password") String password,
 			 				 @RequestParam("captcha") String captcha,
 			 				 HttpSession session,
-			 				 Model model) {
+			 				 Model model) throws Exception {
 //		// 比對驗證碼
 //		if(!captcha.equals(session.getAttribute("code")+"")) {
 //			session.invalidate(); // session 過期失效
@@ -57,7 +61,16 @@ public class loginController {
 		Optional<EmployeeInfo> employeeOpt = dao.findEmployeeInfoByAccount(username);
 		if(employeeOpt.isPresent()) {
 			EmployeeInfo employeeInfo = employeeOpt.get();
-			if(employeeInfo.getPassword().equals(password)) {
+	        // 将 password 进行 AES 加密 -------------------------------------------------------------------
+	        Optional<ConstantData> constantDataOpt = dao.findConstantData("AESKey");
+	        ConstantData constantData = constantDataOpt.get();
+	        
+	        final String KEY = constantData.getConstant();
+	        SecretKeySpec aesKeySpec = new SecretKeySpec(KEY.getBytes(), "AES");
+	        byte[] encryptedPasswordECB = KeyUtil.encryptWithAESKey(aesKeySpec, password);
+	        String encryptedPasswordECBBase64 = Base64.getEncoder().encodeToString(encryptedPasswordECB);
+	        //-------------------------------------------------------------------------------------------
+			if(employeeInfo.getPassword().equals(encryptedPasswordECBBase64)) {
 				session.setAttribute("employeeInfo", employeeInfo); // 將 user 物件放入到 session 變數中
 				return "redirect:/mvc/frontend/index"; // OK, 導向前台首頁
 			} else {

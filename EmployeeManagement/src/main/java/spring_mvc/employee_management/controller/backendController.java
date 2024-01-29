@@ -41,7 +41,7 @@ public class backendController {
 	// 後台目錄
 	// http://localhost:8080/EmployeeManagement/mvc/backend/index
 	@GetMapping("/index")
-	public String backendIndex(Model model) {
+	public String backendIndex() {
 
 		return "employee_management/backend/index";
 	}

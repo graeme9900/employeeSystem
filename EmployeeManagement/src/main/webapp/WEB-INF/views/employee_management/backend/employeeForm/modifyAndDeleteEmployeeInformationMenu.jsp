@@ -50,7 +50,7 @@
 <body>
 	<%@ include file="../../../backendheader.jspf" %>
     <div class="container mt-5 text-center">
-        <h2 class="text-center">修改刪除員工資料選單</h2>
+        <h2 class="text-center">修改員工資料選單</h2>
         
         <table class="table table-bordered text-center">
             <thead>

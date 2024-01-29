@@ -29,7 +29,7 @@
 <body>
 <%@ include file="../../../backendheader.jspf" %>
 
-<div class="container text-center">
+<div class="container text-center mt-5">
     <h2>部門資料</h2>
     <table class="table table-bordered">
         <thead>

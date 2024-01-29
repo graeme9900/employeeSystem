@@ -89,5 +89,17 @@
             <bean class="spring_mvc.employee_management.interceptor.BackendInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
+    
+        <!-- 定義攔截器 Bean -->
+    <bean id="AdministratorInterceptor" class="spring_mvc.employee_management.interceptor.AdministratorInterceptor"/>
+
+    <!-- 配置攔截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/administrator/**"/>
+
+            <bean class="spring_mvc.employee_management.interceptor.AdministratorInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 	
 </beans>		

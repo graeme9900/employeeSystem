@@ -31,7 +31,7 @@
 <body>
 <%@ include file="../../../backendheader.jspf" %>
 <div class="container mt-5 text-center">
-    <h2>工時表</h2>
+    <h2>班表</h2>
     <table class="table table-bordered">
         <thead>
         <tr>

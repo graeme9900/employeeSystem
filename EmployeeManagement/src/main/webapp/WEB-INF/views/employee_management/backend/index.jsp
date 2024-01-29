@@ -24,9 +24,10 @@
 								<a href="/EmployeeManagement/mvc/backend/modifyAndDeleteEmployeeInformationMenu" class="btn btn-primary btn-lg mb-3">員工資料修改</a> 
 								<a href="/EmployeeManagement/mvc/backend/modifyAndDeleteDepartmentInformation" class="btn btn-warning btn-lg mb-3">部門資料修改</a> 
 								<a href="/EmployeeManagement/mvc/backend/modifyAndDeleteLeaveRecord" class="btn btn-info btn-lg mb-3">請假資料修改</a> 
-								<a href="/EmployeeManagement/mvc/backend/modifyAndDeleteWorkHoursRecord" class="btn btn-success btn-lg mb-3">工時資料修改</a> 
-								<a href="/EmployeeManagement/mvc/backend/modifyAndDeleteAttendanceTable" class="btn btn-secondary btn-lg mb-3">簽到資料修改</a> 
+								<a href="/EmployeeManagement/mvc/backend/modifyAndDeleteWorkHoursRecord" class="btn btn-success btn-lg mb-3">班表資料修改</a> 
+								<a href="/EmployeeManagement/mvc/backend/modifyAndDeleteAttendanceTable" class="btn btn-secondary btn-lg mb-3">簽到資料修改</a>  
 								<a href="../frontend/index" class="btn btn-danger btn-lg mb-3">前台</a>
+								<a href="/EmployeeManagement/mvc/administrator/index" class="btn btn-light btn-lg mb-3">管理員操作</a>
 							</div>
 						</div>
 					</div>

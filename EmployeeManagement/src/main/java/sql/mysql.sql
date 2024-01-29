@@ -105,6 +105,13 @@
 |   number          |   數字		        |   INT          |
 +-------------------+-------------------+----------------+
 
+-- 常數資料  constantData
++-------------------+-------------------+----------------+
+|   英文欄位        |   中文欄位          |  資料型態    |
++-------------------+-------------------+----------------+
+|   dataName        |   資料名稱        |   VARCHAR(255) |
+|   constant        |   字串		    |   VARCHAR(255) |
++-------------------+-------------------+----------------+
 
 
 */
@@ -121,6 +128,7 @@ drop table if exists workHoursRecord;
 drop table if exists departmentInfo;
 drop table if exists employeeInfo;
 drop table if exists integerData;
+drop table if exists constantData;
 
 
 
@@ -142,7 +150,7 @@ CREATE TABLE IF NOT EXISTS employeeInfo (
     email VARCHAR(255),
     phone VARCHAR(255),
     account VARCHAR(255),
-    password VARCHAR(255) DEFAULT "12345678",
+    password VARCHAR(255) DEFAULT "llzxVLAijEI4dwLKZ6X8kA==",
     permissions INT DEFAULT 1,
     nowSignInNumber INT DEFAULT 0
 );
@@ -237,12 +245,25 @@ CREATE TABLE IF NOT EXISTS integerData (
 	number INT
 );
 
+-- 建立 IntegerData table
+CREATE TABLE IF NOT EXISTS constantData (
+	dataName VARCHAR(255) PRIMARY KEY,
+	constant VARCHAR(255)
+);
+
 -- 插入 IntegerData 資料
 INSERT INTO integerData (dataName, number)
 VALUES
 ('latestCheckInNumber', 1),
 ('employeeID', 1),
 ('departmentID', 0);
+
+-- 插入 constantData 資料
+INSERT INTO constantData (dataName, constant)
+VALUES
+('AESKey', '0123456789abcdef0123456789abcdef'),
+('IpAddressRange', '10.100.53');
+
 
 -- 插入八筆部門資訊
 INSERT INTO departmentInfo (departmentID, departmentName, employeeCount, managerID) VALUES 
@@ -261,21 +282,21 @@ UPDATE integerData SET number = 0+9 WHERE dataName = 'departmentID';
 -- 插入 EmployeeInfo 資料
 INSERT INTO employeeInfo (employeeID, personName, departmentID, position, positionrank, hireDate, salary, birthday, email, phone)
 VALUES
-(1, 'John Doe', 1, 'Software Engineer', 'Senior', '2022-01-15', 80000, '1990-05-20', 'john@example.com', '1234567890');
+(1, '王大明', 1, '軟體工程師', '2', '2022-01-15', 80000, '1990-05-20', 'john@example.com', '0922-968-762');
 UPDATE employeeInfo
 SET account = CONCAT('user_', employeeID)
 WHERE employeeID = 1;
 
 INSERT INTO employeeInfo (employeeID, personName, departmentID, position, positionrank, hireDate, salary, birthday, email, phone)
 VALUES
-(2, 'Jane Smith', 2, 'Marketing Manager', 'Manager', '2022-02-20', 90000, '1985-08-10', 'jane@example.com', '9876543210');
+(2, '李白', 2, '市場經理', '3', '2022-02-20', 90000, '1985-08-10', 'jane@example.com', '0968-758-769');
 UPDATE employeeInfo
 SET account = CONCAT('user_', employeeID)
 WHERE employeeID = 2;
 
 INSERT INTO employeeInfo (employeeID, personName, departmentID, position, positionrank, salary, birthday, email, phone)
 VALUES
-(3, 'Bob Johnson', 3, 'Sales Representative', 'Junior', 70000, '1992-12-05', 'bob@example.com', '5551234567');
+(3, '張三', 3, '銷售代表', '1', 70000, '1992-12-05', 'bob@example.com', '0955-587-962');
 UPDATE employeeInfo
 SET account = CONCAT('user_', employeeID)
 WHERE employeeID = 3;
@@ -299,27 +320,36 @@ WHERE employeeID = 3;
 
 -- 插入 Education 資料
 INSERT INTO education (employeeID, education) VALUES
-(1, 'Bachelor in Computer Science'),
-(2, 'Master in Business Administration'),
-(3, 'Associate in Marketing');
+(1, '電腦科學學士'),
+(2, '工商管理碩士'),
+(3, '行銷學學士');
 
 -- 插入 WorkExperience 資料
 INSERT INTO workExperience (employeeID, workExperience) VALUES
-(1, '5 years as Software Engineer'),
-(2, '8 years as Marketing Manager'),
-(3, '3 years as Sales Representative');
+(1, '擔任軟體工程師 5 年'),
+(2, '擔任行銷經理8年'),
+(3, '擔任銷售代表 3 年');
 
 -- 插入 Skill 資料
 INSERT INTO skill (employeeID, skill) VALUES
-(1, 'Java, Python, SQL'),
-(2, 'Marketing Strategy, SEO, Social Media'),
-(3, 'Sales, Customer Relationship, Negotiation');
+(1, 'Java'),
+(1, 'Python'),
+(1, 'SQL'),
+(2, '行銷策略'),
+(2, '搜尋引擎優化'),
+(2, '社群媒體'),
+(3, '銷售'),
+(3, '客戶關係'),
+(3, '談判');
 
 -- 插入 Interest 資料
 INSERT INTO interest (employeeID, interest) VALUES
-(1, 'Programming, Reading'),
-(2, 'Traveling, Photography'),
-(3, 'Sports, Music');
+(1, '程式設計'),
+(1, '閱讀'),
+(2, '旅遊'),
+(2, '攝影'),
+(3, '體育'),
+(3, '音樂');
 
 
 -- 插入 leaveRecord 資料

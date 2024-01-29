@@ -47,7 +47,7 @@
 						<form method="post" action="./leaveForm/add">
 							<div class="mb-3">
 								<label for="employeeId" class="form-label">員工號</label> <input
-									type="text" class="form-control" id="employeeId"
+									type="number" min="1" class="form-control" id="employeeId"
 									name="employeeId" required>
 							</div>
 							<div class="mb-3">

@@ -7,12 +7,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -28,12 +30,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring_mvc.employee_management.model.dao.EmployeeManagementDao;
 import spring_mvc.employee_management.model.entity.AttendanceTable;
+import spring_mvc.employee_management.model.entity.ConstantData;
 import spring_mvc.employee_management.model.entity.DepartmentInfo;
 import spring_mvc.employee_management.model.entity.Education;
 import spring_mvc.employee_management.model.entity.EmployeeInfo;
 import spring_mvc.employee_management.model.entity.IntegerData;
 import spring_mvc.employee_management.model.entity.LeaveRecord;
 import spring_mvc.employee_management.model.entity.WorkHoursRecord;
+import spring_mvc.employee_management.util.KeyUtil;
 
 // 前端控制
 @Controller
@@ -81,7 +85,7 @@ public class frontendController {
 	@PostMapping("/checkInVerification")
 	public String frontendCheckInVerification(@RequestParam("action") String action,
 											  @RequestParam("captcha") String captcha,
-											  Model model, HttpSession session) {
+											  Model model, HttpSession session, HttpServletRequest request) {
 		// 比對驗證碼
 //		if(!captcha.equals(session.getAttribute("code")+"")) {
 //
@@ -94,6 +98,45 @@ public class frontendController {
 //
 //			return "redirect:/mvc/frontend/verificationPage";
 //		}
+		
+		Optional<ConstantData> constantDataOpt = dao.findConstantData("IpAddressRange");
+		ConstantData constantData = constantDataOpt.get();
+		String ipAddressRange = constantData.getConstant();
+		
+		// 獲取客户端的IP地址
+        String userIpAddress = request.getRemoteAddr();
+        // 我本機的地址
+        String myIpAddress ="0:0:0:0:0:0:0:1";
+//        System.out.println(userIpAddress);
+//        System.out.println(userIpAddress.substring(0, Math.min(userIpAddress.length(), 9)));
+        
+        
+        // 測試用
+        if(userIpAddress.equals("10.100.53.38")) {
+        	// 提示
+			model.addAttribute("errorMessage", "IP 錯誤");
+			model.addAttribute("nextUrl", "index");
+			model.addAttribute("boolMessage" , true);
+
+
+			return "redirect:/mvc/frontend/verificationPage";
+        }
+        
+        
+        if(userIpAddress.equals(myIpAddress)) {
+    		// 跳出
+    	} else if (!ipAddressRange.equals(userIpAddress.substring(0, Math.min(userIpAddress.length(), 9)))) {
+
+        	// 提示
+			model.addAttribute("errorMessage", "ip 錯誤");
+			model.addAttribute("nextUrl", "index");
+			model.addAttribute("boolMessage" , true);
+
+
+			return "redirect:/mvc/frontend/verificationPage";
+        }
+		
+		
 		EmployeeInfo employee = (EmployeeInfo) session.getAttribute("employeeInfo");
 
 		if (action.equals("signIn")) {
@@ -203,6 +246,7 @@ public class frontendController {
 	@GetMapping("/departmentSelectionToClassSchedule")
 	public String frontendDepartmentSelectionToClassSchedule(Model model) {
 		List<DepartmentInfo> departmentInfoList = dao.findAllDepartmentInfos();
+		departmentInfoList.remove(0);
 		model.addAttribute("departmentInfoList", departmentInfoList);
 		return "employee_management/frontend/leaveSystem/departmentSelectionToClassSchedule";
 	}
@@ -230,8 +274,11 @@ public class frontendController {
 
 		}
 		List<WorkHoursRecord> workHoursRecordList = dao.findWorkHoursRecordByDepartmentID(departmentID);
-		System.out.println(workHoursRecordList);
 		model.addAttribute("workHoursRecordList", workHoursRecordList);
+		
+		List<LeaveRecord> leaveRecordList = dao.findLeaveRecordByDepartmentID(departmentID);
+		System.out.println(leaveRecordList);
+		model.addAttribute("leaveRecordList", leaveRecordList);
 		return "employee_management/frontend/leaveSystem/workSchedule";
 	}
 	
@@ -244,6 +291,7 @@ public class frontendController {
 	@GetMapping("/departmentSelectionToSignOff")
 	public String frontendDepartmentSelectionToSignOff(Model model) {
 		List<DepartmentInfo> departmentInfoList = dao.findAllDepartmentInfos();
+		departmentInfoList.remove(0);
 		model.addAttribute("departmentInfoList", departmentInfoList);
 		return "employee_management/frontend/leaveSystem/departmentSelectionToSignOff";
 	}
@@ -292,6 +340,7 @@ public class frontendController {
 	@GetMapping("/employeeManagementPage")
 	public String frontendEmployeeManagementPage(Model model) {
 		List<DepartmentInfo> departmentInfoList = dao.findAllDepartmentInfos();
+		departmentInfoList.remove(0);
 		model.addAttribute("departmentInfoList", departmentInfoList);
 		return "employee_management/frontend/employeeManagementSystem/employeeManagementPage";
 	}
@@ -442,16 +491,34 @@ public class frontendController {
 	public String frontendChangePasswordLogic(@RequestParam("oldPassword") String oldPassword,
 											  @RequestParam("newPassword") String newPassword,
 											  @RequestParam("confirmNewPassword") String confirmNewPassword,
-											  HttpSession session) {
+											  HttpSession session) throws Exception {
 		EmployeeInfo employeeInfo;
 		try {
 			employeeInfo = (EmployeeInfo) session.getAttribute("employeeInfo");
 		} catch (Exception e) {
 			return "redirect:/mvc/frontend/index";
 		}
-		if(oldPassword.equals(employeeInfo.getPassword())) {
+		
+        // 将 password 进行 AES 加密 -------------------------------------------------------------------
+        Optional<ConstantData> constantDataOpt = dao.findConstantData("AESKey");
+        ConstantData constantData = constantDataOpt.get();
+        
+        final String KEY = constantData.getConstant();
+        SecretKeySpec aesKeySpec = new SecretKeySpec(KEY.getBytes(), "AES");
+        byte[] encryptedOldPasswordECB = KeyUtil.encryptWithAESKey(aesKeySpec, oldPassword);
+		String encryptedOldPasswordECBBase64 = Base64.getEncoder().encodeToString(encryptedOldPasswordECB);
+        //-------------------------------------------------------------------------------------------
+		
+		
+		if(employeeInfo.getPassword().equals(encryptedOldPasswordECBBase64)) {
 			if (newPassword.equals(confirmNewPassword)) {
-				employeeInfo.setPassword(newPassword);
+				
+				// 將新密碼加密
+				byte[] encryptedNewPasswordECB = KeyUtil.encryptWithAESKey(aesKeySpec, newPassword);
+				String encryptedNewPasswordECBBase64 = Base64.getEncoder().encodeToString(encryptedNewPasswordECB);
+				
+				
+				employeeInfo.setPassword(encryptedNewPasswordECBBase64);
 				session.setAttribute("employeeInfo", employeeInfo);
 				dao.updateEmployeeInfoPassword(employeeInfo);
 			}
@@ -489,6 +556,32 @@ public class frontendController {
 
 		dao.deleteLeaveRecord(leaveNumber);	
 		return "redirect:/mvc/frontend/leaveInquiry";
+	}
+	
+	// 測試
+	// http://localhost:8080/EmployeeManagement/mvc/frontend/test
+	@GetMapping("/test")
+	@ResponseBody
+	public String frontendTest(Model model, HttpSession session, HttpServletRequest request) throws Exception {
+//		String password = "12345678";
+//        // 将 password 进行 AES 加密 -------------------------------------------------------------------
+//        Optional<ConstantData> constantDataOpt = dao.findConstantData("AESKey");
+//        ConstantData constantData = constantDataOpt.get();
+//        
+//        final String KEY = constantData.getConstant();
+//        SecretKeySpec aesKeySpec = new SecretKeySpec(KEY.getBytes(), "AES");
+//        byte[] encryptedPasswordECB = KeyUtil.encryptWithAESKey(aesKeySpec, password);
+//        String encryptedPasswordECBBase64 = Base64.getEncoder().encodeToString(encryptedPasswordECB);
+//        //-------------------------------------------------------------------------------------------
+//        System.out.println(encryptedPasswordECBBase64);
+
+//		return encryptedPasswordECBBase64;
+		
+		// 获取客户端的IP地址
+        String ipAddress = request.getRemoteAddr();
+        System.out.println(ipAddress);
+        return "Client IP Address: " + ipAddress;
+
 	}
 	
 

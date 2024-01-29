@@ -31,7 +31,7 @@
       <div class="col-md-8">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title text-center">請假表格</h4>
+            <h4 class="card-title text-center">假單</h4>
             <table class="table table-bordered table-striped">
               <thead class="text-center">
                 <tr class="text-center">
@@ -52,11 +52,23 @@
 						<td>${ leaveRecord.getLeaveStartDate().plusHours(LeaveRecord.getHours()) }</td>
 		                <td>${ leaveRecord.getHours() }</td>
 		                <td>
-		                	<button
+		                	<c:choose>
+							    <c:when test="${ leaveRecord.getApproval()  eq true}">
+							        已簽核
+							    </c:when>
+							    <c:otherwise>
+							        <button
 								class="btn btn-danger btn-sm"
 								onclick="updateleaveRecord(${ leaveRecord.getLeaveNumber() })"
 								id="leaveNumber_${ leaveRecord.getLeaveNumber() }"
 								value="${ leaveRecord.getLeaveNumber() }">取消</button>
+							    </c:otherwise>
+							</c:choose>
+<!-- 		                	<button -->
+<!-- 								class="btn btn-danger btn-sm" -->
+<%-- 								onclick="updateleaveRecord(${ leaveRecord.getLeaveNumber() })" --%>
+<%-- 								id="leaveNumber_${ leaveRecord.getLeaveNumber() }" --%>
+<%-- 								value="${ leaveRecord.getLeaveNumber() }">取消</button> --%>
 						</td>
 	                </tr>
                 </c:forEach>

@@ -31,33 +31,13 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/EmployeeManagement/mvc/backend/index">首頁 </a>
+                    <a class="nav-link active" aria-current="page" href="/EmployeeManagement/mvc/administrator/index">首頁 </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/EmployeeManagement/mvc/backend/modifyAndDeleteEmployeeInformationMenu">員工資料修改</a>
+                    <a class="nav-link" href="/EmployeeManagement/mvc/administrator/modifyPermissions">修改權限</a>
 
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="/EmployeeManagement/mvc/backend/modifyAndDeleteDepartmentInformation">部門資料修改</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="/EmployeeManagement/mvc/backend/modifyAndDeleteLeaveRecord">請假資料修改</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="/EmployeeManagement/mvc/backend/modifyAndDeleteWorkHoursRecord">班表資料修改</a>
-                  </li>
-                  
-                  <li class="nav-item">
-                    <a class="nav-link" href="/EmployeeManagement/mvc/backend/modifyAndDeleteAttendanceTable">簽到資料修改</a>
-                  </li>
-                  
-                  <li class="nav-item">
-                    <a class="nav-link" href="/EmployeeManagement/mvc/frontend/index">前台</a>
-                  </li>
-                  
-                  <li class="nav-item">
-                    <a class="nav-link" href="/EmployeeManagement/mvc/administrator/index">管理員操作</a>
-                  </li>
+
                 </ul>
                 
 

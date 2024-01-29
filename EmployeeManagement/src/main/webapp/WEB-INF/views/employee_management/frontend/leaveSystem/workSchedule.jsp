@@ -50,12 +50,22 @@
 	                    {
 	                        title: '${ workHoursRecord.employeeInfo.getPersonName() }',
 	                        start: '${ workHoursRecord.getStartTime() }',
-	                        end: '${ workHoursRecord.getEndTime() }'
+	                        end: '${ workHoursRecord.getEndTime() }',
+	                        color: '#007bff'
+	                    },
+                    </c:forEach>
+	                    
+	                <c:forEach items="${leaveRecordList}" var="leaveRecord">
+	                    {
+	                        title: '${ leaveRecord.employeeInfo.getPersonName() }',
+	                        start: '${ leaveRecord.getLeaveStartDate() }',
+	                        end: '${ leaveRecord.getLeaveStartDate().plusHours(leaveRecord.getHours()) }',
+	                        color: '#dc3545'
 	                    },
                     </c:forEach>
 
                 ],
-                eventColor: '#007bff', // 設定事件顏色
+//                 eventColor: '#007bff', // 設定事件顏色
             });
         });
     </script>

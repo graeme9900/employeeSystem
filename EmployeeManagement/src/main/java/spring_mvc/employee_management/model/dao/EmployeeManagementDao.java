@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import spring_mvc.employee_management.model.entity.AttendanceTable;
+import spring_mvc.employee_management.model.entity.ConstantData;
 import spring_mvc.employee_management.model.entity.DepartmentInfo;
 import spring_mvc.employee_management.model.entity.Education;
 import spring_mvc.employee_management.model.entity.EmployeeInfo;
@@ -257,6 +258,11 @@ public interface EmployeeManagementDao {
 
     // 查詢數字資料
     Optional<IntegerData> findIntegerData(String dataName);
+    
+    // -------- 常數資料 --------
+
+ 	// 查詢常數資料
+ 	Optional<ConstantData> findConstantData(String dataName);
     
     
     // ...其他可能的操作

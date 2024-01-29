@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import spring_mvc.employee_management.model.entity.AttendanceTable;
+import spring_mvc.employee_management.model.entity.ConstantData;
 import spring_mvc.employee_management.model.entity.DepartmentInfo;
 import spring_mvc.employee_management.model.entity.Education;
 import spring_mvc.employee_management.model.entity.EmployeeInfo;
@@ -525,11 +526,11 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 		return leaveRecordList;
 	}
 	
-	// 用員工ID查詢未簽核請假紀錄
+	// 用員工ID查詢請假紀錄
 	@Override
 	public List<LeaveRecord> findLeaveRecordByEmployeeID(Integer employeeID) {
 		String sql = "select leaveNumber, employeeID, departmentID, leaveStartDate, hours, approval from leaverecord\r\n"
-				+ "where employeeID = ? and approval = false";
+				+ "where employeeID = ? ";
 		List<LeaveRecord> leaveRecordList = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(LeaveRecord.class),
 				employeeID);
 		for (LeaveRecord leaveRecord : leaveRecordList) {
@@ -774,6 +775,21 @@ public class EmployeeManagementDaoMySQL implements EmployeeManagementDao {
 			IntegerData integerData = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(IntegerData.class),
 					dataName);
 			return Optional.ofNullable(integerData);
+		} catch (EmptyResultDataAccessException e) {
+			return Optional.empty();
+		}
+	}
+	
+	// -------- 常數資料 --------
+
+	// 查詢常數資料
+	@Override
+	public Optional<ConstantData> findConstantData(String dataName) {
+		String sql = "select dataName, constant from constantData\r\n" + "where dataName = ?";
+		try {
+			ConstantData constantData = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ConstantData.class),
+					dataName);
+			return Optional.ofNullable(constantData);
 		} catch (EmptyResultDataAccessException e) {
 			return Optional.empty();
 		}
